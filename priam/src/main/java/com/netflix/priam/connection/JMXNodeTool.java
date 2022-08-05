@@ -271,6 +271,22 @@ public class JMXNodeTool extends NodeProbe implements INodeToolObservable {
         return object;
     }
 
+    public JSONObject getCFDiskUsage() {
+        Iterator<Entry<String, ColumnFamilyStoreMBean>> it =
+                super.getColumnFamilyStoreMBeanProxies();
+        JSONObject object = new JSONObject();
+        JSONObject object = new JSONObject();
+
+        while (it.hasNext()) {
+            Entry<String, ColumnFamilyStoreMBean> entry = it.next();
+            object.put("keyspace", entry.getKey());
+            object.put("column_family", entry.getValue().getColumnFamilyName());
+            object.put("live_disk_size", (long) super.getColumnFamilyMetric(entry.getKey(),
+                    entry.getValue().getColumnFamilyName(), "liveDiskSpaceUsed"));
+        }
+        return object;
+    }
+
     public JSONObject info() throws JSONException {
         JSONObject object = new JSONObject();
         object.put("gossip_active", isInitialized());
